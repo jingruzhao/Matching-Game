@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>五子棋</title>
+    <style type="text/css">
+        canvas{
+            display:block;
+            margin:50px auto;
+            box-shadow: -2px -2px 2px #EFEFEF, 5px 5px 5px #B9B9B9;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id = "chess" width="450px" height="450px"></canvas>>
+    <script type = "text/Javascript">
+        var chessBoard =[];
+        var me = true;
+
+        for(i=0;i<15;i++){
+           chessBoard[i] = [];
+            for(var j=0;j<15;j++){
+                chessBoard[i][j] = 0;
+            }
+        }
+
+        var chess = document.getElementById('chess');
+        var context = chess.getContext('2d');
+
+        context.strokeStyle = "#BFBFBF";
+
+        //var logo = new Image();
+        //logo.src = "images/logo.png";
+        //logo.onload = function(){
+            //context.drawImage(logo,0,0,450,450);}
+        //必须要用onload方法,在图片加载完后调用
+        //图片挡住了棋盘交叉线(因为定义完onload之后立即执行了下面的for循环,接着图片才加载完)
+        //解决办法:把下面的for循环放入logo.onload中context.drawImage之后.放之前先将for循环封装成一个函数.这样图片就在棋盘线之后了.
+
+        for (var i = 0; i < 15; i++) {
+            context.moveTo(15 + i * 30, 15);
+            context.lineTo(15 + i * 30, 435);
+            context.stroke();//描边——竖线
+
+            context.moveTo(15, 15 + i * 30);
+            context.lineTo(435, 15 + i * 30);
+            context.stroke();//横线
+        }//棋盘
+
+        var oneStep = function(i,j,me){
+            context.beginPath();//开始路径
+            context.arc(15 + i * 30,15 + j * 30,13,0,2*Math.PI);//画扇形或者圆
+            context.closePath();//结束路径
+            var gradient = context.createRadialGradient(15 + i * 30 + 2,15 + j * 30- 2,13,15 + i * 30 + 2,15 + j * 30- 2,0);//返回渐变对象，6个参数对应两个圆
+            if(me){//如果me是黑色
+                gradient.addColorStop(0,"#0A0A0A");
+                gradient.addColorStop(1,"#636766");
+            }else{
+                gradient.addColorStop(0,"#D1D1D1");
+                gradient.addColorStop(1,"#F9F9F9");
+            }
+
+            context.fillStyle =gradient;
+            context.fill();//填充——棋子
+        }
+
+
+        chess.onclick = function(e){
+            var x = e.offsetX;
+            var y = e.offsetY;
+            var i = Math.floor(x/30);
+            var j = Math.floor(y/30);
+            if (chessBoard[i][j] ==0){
+                oneStep(i,j,me);
+                if (me){
+                    chessBoard[i][j] = 1;
+                } else{
+                    chessBoard[i][j] = 2;
+                }
+                me = !me;
+            }
+
+
+        }
+
+    </script>
+</body>
+</html>
